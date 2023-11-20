@@ -1,14 +1,12 @@
-const { Db } = require("mongodb");
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-module.exports = () => {
-  try {
+const connectDatabase = ()=>{
+    mongoose.connect(process.env.ATLAS_URI,{
+        useNewUrlParser:true,
+        useUnifiedTopology:true
+    }).then(con=>{
+        console.log(`MongoDB is connected to the host: ${con.connection.host} `)
+    })
+}
 
-    const uri = process.env.ATLAS_URI;
-    mongoose.connect(uri,{});
-    console.log("Connected to Database Successfully");
-  } catch (error) {
-    console.log(error);
-    console.log("Connection Failed");
-  }
-};
+module.exports = connectDatabase;

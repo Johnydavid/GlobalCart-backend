@@ -1,24 +1,28 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const connectDatabase = require("./config/database");
+const app = require('./app');
+const path = require('path');
+const connectDatabase = require('./config/database');
 
 
+connectDatabase();
 
-app.use(express.json());
-app.use(cors());
-require("dotenv").config();
-
-
-
-const port = Number(process.env.PORT) || 3001
-
-app.listen(port, ()=>{
-    console.log(`server is running on port ${port}`)
+const server = app.listen(process.env.PORT,()=>{
+    console.log(`My Server listening to the port: ${process.env.PORT} in  ${process.env.NODE_ENV} `)
 })
 
-app.use(bodyParser.json())
 
-// Database Connection
-connectDatabase();
+
+process.on('unhandledRejection',(err)=>{
+    console.log(`Error: ${err.message}`);
+    console.log('Shutting down the server due to unhandled rejection error');
+    server.close(()=>{
+        process.exit(1);
+    })
+})
+
+process.on('uncaughtException',(err)=>{
+    console.log(`Error: ${err.message}`);
+    console.log('Shutting down the server due to uncaught exception error');
+    server.close(()=>{
+        process.exit(1);
+    })
+})
