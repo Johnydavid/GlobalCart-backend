@@ -21,7 +21,7 @@ exports.getProducts = async(req, res, next)=>{
 }
 
 
-// Create New Product [Post Method]- /api/product/new
+//Admin: Create New Product [Post Method]- /api/admin/product/new
 exports.newProduct = catchAsyncError( async (req, res, next)=>{
     req.body.user = req.user.id
     const product = await Product.create(req.body)
@@ -49,7 +49,7 @@ exports.getSingleProduct = async(req, res, next)=>{
 }
 
 
-// Update Product [Put Method] - /api/product/:id'
+// Admin: Update Product [Put Method] - /api/admin/product/:id'
 
 exports.updateProduct = async(req, res, next)=>{
     let product = await Product.findById(req.params.id)
@@ -90,3 +90,104 @@ exports.deleteProduct = async(req, res, next)=>{
     })
 
 }
+
+
+// Create Review -[Post Method] /api/review
+
+exports.createReview = catchAsyncError(async(req, res,next)=>{
+    const {productId, rating, comment} = req.body;
+
+    const review={
+        user: req.user.id,
+         rating,
+         comment
+
+    }
+
+    const product = await Product.findById(productId);
+
+    // Finding if user already reviewed
+    const isReviewed = product.reviews.find(review=>{
+      return  review.user.toString() == req.user.id.toString()
+    })
+    if(isReviewed){
+        // Updating the Reviews
+product.reviews.forEach(review=>{
+    if(review.user.toString() ==  req.user.id.toString()){
+        review.comment = comment
+        review.rating = rating
+    }
+})
+
+
+    }else{
+        // Creating the Reviews
+        product.reviews.push(review);
+        product.numOfReviews = product.reviews.length;
+    }
+
+    // Find the average of the Product Reviews
+    product.ratings = product.reviews.reduce((acc, review)=>{
+        return review.rating + acc;
+    },0) / product.reviews.length;
+
+    product.ratings = isNaN(product.ratings)?0:product.ratings
+
+    await product.save({validateBeforeSave: false})
+
+    res.status(200).json({
+        success: true
+    })
+
+        
+})
+
+
+// Get Reviews [ Get Method]  /api/reviews?id={productId}
+
+exports.getReviews = catchAsyncError(async(req, res, next)=>{
+    const product = await Product.findById(req.query.id);
+
+    res.status(200).json({
+        success: true,
+        reviews: product.reviews
+    })
+})
+
+
+// Delete Review  [Delete Method]  /api/review/
+
+exports.deleteReview = catchAsyncError(async(req, res, next)=>{
+    const product = await Product.findById(req.query.productId);
+
+    // Filering the Reviews which does  match the Deleting Review Id
+
+    const reviews = product.reviews.filter(review=>{
+        return review._id.toString() !== req.query.id.toString()
+    })
+
+    // Updating Number of Reviews
+    const numOfReviews = reviews.length;
+
+    // Finding the Average with the filtered Reviews
+
+let ratings = reviews.reduce((acc, review)=>{
+        return review.rating + acc;
+    },0) / product.reviews.length;
+
+    ratings = isNaN(ratings)?0:ratings;
+
+    // Saving the product documents
+
+    await Product.findByIdAndUpdate(req.query.productId, {
+        reviews,
+        numOfReviews,
+        ratings
+    })
+
+    res.status(200).json({
+        success: true
+    })
+})
+
+
