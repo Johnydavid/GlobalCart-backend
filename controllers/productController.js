@@ -7,13 +7,17 @@ const APIFeatures = require("../utils/apiFeatures");
 // Read all Products - [Get Method] - /api/products
 exports.getProducts = async(req, res, next)=>{
 
-    const resPerPage = 2;
+    const resPerPage = 3;
     const apiFeatures = new APIFeatures(Product.find(), req.query).search().filter().paginate(resPerPage);
 
     const products = await apiFeatures.query;
+    const totalProductsCount = await Product.countDocuments({});
+    // await new Promise (resolve=> setTimeout(resolve, 3000))
+    // return next(new ErrorHandler("Unable to send Products!", 400))
    res.status(200).json({
     success : "true",
-    count : products.length,
+    count : totalProductsCount,
+    resPerPage,
     products
    }) 
   
@@ -42,6 +46,7 @@ exports.getSingleProduct = async(req, res, next)=>{
       return next(new ErrorHandler('Product Not Found', 400))
        
     }
+    // await new Promise(resolve=>setTimeout(resolve, 3000))
     res.status(201).json({
         success : true,
         product

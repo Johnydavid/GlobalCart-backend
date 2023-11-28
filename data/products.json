@@ -9,7 +9,7 @@
                 "image": "/images/products/1.jpg"
             },
             {
-                "image": "/images/products/2.jpg"
+                "image": "/images/products/oppo_2.jpg"
             }
         ],
         "category": "Mobile Phones",
@@ -57,7 +57,7 @@
         "ratings": 4,
         "images": [
           {
-            "image": "/images/products/6.jpg"
+            "image": "/images/products/lenovo_ideapad.jpg"
           }
         ],
         "category": "Laptops",
@@ -73,7 +73,7 @@
         "ratings": 5,
         "images": [
           {
-            "image": "/images/products/7.jpg"
+            "image": "/images/products/Asus.jpg"
           }
         ],
         "category": "Laptops",

@@ -6,7 +6,7 @@ const {isAuthenticatedUser, authoriseRoles} = require("../middlewares/authentica
 
 
 
-router.route('/products').get(isAuthenticatedUser, getProducts)
+router.route('/products').get( getProducts)
 router.route('/product/:id').get(getSingleProduct)
 router.route('/product/:id').delete(deleteProduct)
 router.route('/review').post(isAuthenticatedUser, createReview)
