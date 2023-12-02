@@ -7,7 +7,7 @@ const APIFeatures = require("../utils/apiFeatures");
 // Read all Products - [Get Method] - /api/products
 exports.getProducts = async(req, res, next)=>{
 
-    const resPerPage = 3;
+    const resPerPage = 4;
     
 
     let buildQuery = ()=>{
